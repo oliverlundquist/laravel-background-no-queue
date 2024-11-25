@@ -18,8 +18,10 @@ Route::post('some-logic-that-takes-forever-to-process', function ()
 
     $requestHandler->storeRequest($request);
 
-    redirect("background-request-progress/{$requestId}")->send();
-    function_exists('fastcgi_finish_request') && fastcgi_finish_request();
+    if (function_exists('fastcgi_finish_request')) {
+        redirect("background-request-progress/{$requestId}")->send();
+        fastcgi_finish_request();
+    }
 
     foreach ([25, 50, 75, 100] as $progress) {
         sleep(2); // increment progress by 25% every 2 seconds
